@@ -1,12 +1,14 @@
 import sys
-print("arguments", sys.argv)
-
-day = int(sys.argv[1])
-print(f"Running pipeline for day {day}")
-
 import pandas as pd
 
-df = pd.DataFrame({"A": [1, 2], "B": [3, 4]})
+print("arguments", sys.argv)
+
+month = int(sys.argv[1])
+
+df = pd.DataFrame({"A_parameter": [1, 2], "B_parameter": [3, 4]})
+df['month'] = month
 print(df.head())
 
-df.to_parquet(f"output_day_{sys.argv[1]}.parquet")
+df.to_parquet(f"output_month_{sys.argv[1]}.parquet")
+print(f"hello pipeline, month {month}")
+

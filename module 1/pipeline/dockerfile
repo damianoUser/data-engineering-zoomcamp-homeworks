@@ -1,0 +1,23 @@
+# immagine Docker di base su cui costruiamo la nuova immagine
+FROM python:3.13.11-slim
+
+# prendiamo uv da una directory di un immagine docker std (tag 'from'), alla sottocartella /bin dell'immagine che stiamo creando
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/
+
+# imposta la directory di lavoro per i comandi successivi.
+WORKDIR /app
+
+# modifica variabili ambiente in modo che il comando che vogliamo eseguire sia sempre eseguito come 'uv run' , che quindi non abbiamo bisogno di specificare nel comando (altrimenti andrebbe specificato)
+ENV PATH="/app/.venv/bin:$PATH"
+
+# porta i seguenti 3 file nella working directory specificata
+COPY "pyproject.toml" "uv.lock" ".python-version" ./
+
+# installa tutte le dependencies dal file uv.lock creato dal venv del progetto.
+RUN uv sync --locked
+
+# copia lo script (1o nome) nella cartella del container specificata. Il punto indica la working directory specificata
+COPY pipeline.py .
+
+# definisce cosa fare quando il container viene avviato. Gli assegniamo un comando da eseguire
+ENTRYPOINT ["python", "pipeline.py"]
